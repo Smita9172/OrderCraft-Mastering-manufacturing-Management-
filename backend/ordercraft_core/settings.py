@@ -10,6 +10,7 @@ Database: Supabase PostgreSQL with SQLite fallback
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # -------------------------------------------------
 # BASE DIRECTORY & ENVIRONMENT VARIABLES
@@ -27,16 +28,34 @@ load_dotenv(BASE_DIR / '.env', override=True)
 # SECURITY SETTINGS
 # -------------------------------------------------
 
-SECRET_KEY = os.getenv(
-    'SECRET_KEY',
-    'ordercraft-manufacturing-super-secret-key-2026'
-)
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    raise ImproperlyConfigured('SECRET_KEY must be set in the environment.')
 
-DEBUG = os.getenv('DEBUG', 'True').strip().lower() in (
+DEBUG = os.getenv('DEBUG', 'False').strip().lower() in (
     'true', '1', 'yes'
 )
 
-ALLOWED_HOSTS = ['*']
+def _env_list(name, default=''):
+    return [item.strip() for item in os.getenv(name, default).split(',') if item.strip()]
+
+
+render_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
+ALLOWED_HOSTS = _env_list('ALLOWED_HOSTS')
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+if not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured(
+        'Set ALLOWED_HOSTS or provide RENDER_EXTERNAL_HOSTNAME in production.'
+    )
+
+CSRF_TRUSTED_ORIGINS = _env_list('CSRF_TRUSTED_ORIGINS')
+if render_hostname:
+    render_origin = f'https://{render_hostname}'
+    if render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(render_origin)
 
 # -------------------------------------------------
 # APPLICATION DEFINITION
@@ -70,6 +89,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -136,7 +156,11 @@ if use_postgres and supabase_host:
     port = _env('SUPABASE_DB_PORT', '5432')
     if not _is_host_resolvable(supabase_host, port):
         print(f">> [OrderCraft] Notice: Supabase host '{supabase_host}' is not resolvable from current network (offline/sandbox mode).")
-        print(">> [OrderCraft] Gracefully falling back to local SQLite database (db.sqlite3) so system remains 100% operational.")
+        if not DEBUG:
+            raise ImproperlyConfigured(
+                'Supabase PostgreSQL host is not resolvable in production; refusing to use SQLite.'
+            )
+        print(">> [OrderCraft] Falling back to local SQLite database for DEBUG development.")
         use_postgres = False
 
 if use_postgres:
@@ -204,6 +228,12 @@ if use_postgres:
 
 else:
 
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'Supabase PostgreSQL configuration is required when DEBUG=False. '
+            'Set DATABASE_URL or SUPABASE_DB_HOST and related credentials.'
+        )
+
     # Automatic local SQLite fallback
     DATABASES = {
         'default': {
@@ -261,6 +291,15 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -273,6 +312,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = not DEBUG
+SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000' if not DEBUG else '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 # -------------------------------------------------
 # DJANGO REST FRAMEWORK

@@ -17,3 +17,7 @@ backend/err.txt
 # Django generated assets
 backend/staticfiles/
 backend/media/
+
+# Render and deployment artifacts
+.render/
+*.log

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ordercraft
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: python -m pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate
+    startCommand: python -m gunicorn ordercraft_core.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        sync: false
