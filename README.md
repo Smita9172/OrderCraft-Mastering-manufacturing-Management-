@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OrderCraft: Mastering Manufacturing Management ERP
 > **A Comprehensive Enterprise Manufacturing & Operations Management System**  
 > *Developed for Major College Academic Evaluation*
@@ -160,3 +161,6 @@ All accounts use the default password: `ordercraft123`
    - Real-time gross requirement calculation including scrap/wastage allowances.
 4. **BOM Explosion Algorithm**: Calculates total dependent components for batch sizes, queries live inventory, and flags material shortages before production launch.
 5. **Security & Auditing**: Immutable `AuditLog` captures operational trails with IP addresses and user actor tags.
+=======
+# OrderCraft-Mastering-manufacturing-Management-
+>>>>>>> 9c5101a73c09074d3fe1209a14f4ab601b6adb6d
