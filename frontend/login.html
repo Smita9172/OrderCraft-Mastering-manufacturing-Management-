@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – OrderCraft Manufacturing ERP</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body class="auth-page">
+
+    <div class="auth-wrapper">
+        <!-- Left Side Brand Presentation -->
+        <div class="auth-banner-side">
+            <div>
+                <div class="auth-banner-brand">
+                    <div class="auth-banner-symbol">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div>
+                        <h3>OrderCraft</h3>
+                        <span>Manufacturing ERP</span>
+                    </div>
+                </div>
+
+                <div class="auth-banner-middle">
+                    <h2>Role-Secured Plant Operations</h2>
+                    <p>
+                        Authorized portal access for production engineers, sales executives, supply chain controllers, and plant administrators.
+                    </p>
+
+                    <ul class="auth-feature-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Protected Role-Based Access Control (RBAC)</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Multi-Level BOM & Shortage Explosion Engine</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Goods Receipt (GRN) & Stock Automation</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>GST Tax Invoicing & Dual Cashflow Reconciliation</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="auth-banner-footer">
+                Apex Precision Engineering &bull; Production Facility 01 &bull; System Active
+            </div>
+        </div>
+
+        <!-- Right Side Form -->
+        <div class="auth-form-side">
+            <a href="/" class="back-home-link">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to OrderCraft Homepage</span>
+            </a>
+
+            <div class="auth-header">
+                <h1>Sign In to OrderCraft</h1>
+                <p>Enter your plant credentials to access manufacturing operations.</p>
+            </div>
+
+            <!-- Error Notification Box -->
+            <div class="auth-error-box" id="login-error-box">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="login-error-text">Invalid username/email or password.</span>
+            </div>
+
+            <!-- Success Notification Box -->
+            <div class="auth-success-box" id="login-success-box">
+                <i class="fas fa-check-circle"></i>
+                <span id="login-success-text">Authentication successful! Redirecting to ERP dashboard...</span>
+            </div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="login-form" onsubmit="handleLoginSubmit(event)">
+                <!-- Email or existing username Field -->
+                <div class="auth-field">
+                    <label class="auth-label" for="login-username">Email Address or Username *</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-user field-icon"></i>
+                        <input type="text" 
+                               class="auth-input" 
+                               id="login-username" 
+                               name="username" 
+                               placeholder="e.g. admin@ordercraft.com or admin" 
+                               required 
+                               autocomplete="username">
+                    </div>
+                </div>
+
+                <!-- Password Field with Show/Hide Toggle -->
+                <div class="auth-field">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label class="auth-label" for="login-password">Password *</label>
+                        <span style="font-size:12px; color:var(--slate-400);">Your OrderCraft password</span>
+                    </div>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-lock field-icon"></i>
+                        <input type="password" 
+                               class="auth-input" 
+                               id="login-password" 
+                               name="password" 
+                               placeholder="Enter your password" 
+                               required 
+                               autocomplete="current-password">
+                        <button type="button" 
+                                class="toggle-password-btn" 
+                                id="toggle-password-btn" 
+                                onclick="togglePasswordVisibility()" 
+                                title="Show/Hide Password">
+                            <i class="fas fa-eye" id="password-eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:13px; margin: 2px 0;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--slate-600);">
+                        <input type="checkbox" id="remember-me" checked style="accent-color:var(--brand-primary); cursor:pointer;">
+                        <span>Keep me signed in</span>
+                    </label>
+                    <a href="/register/" style="color:var(--brand-primary); text-decoration:none; font-weight:600; font-size:12.5px;">Create an account &rarr;</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-auth-submit" id="btn-login-submit">
+                    <span id="btn-submit-text">Sign In to ERP</span>
+                    <i class="fas fa-arrow-right" id="btn-submit-icon"></i>
+                </button>
+            </form>
+
+            <p style="text-align:center; color:var(--slate-500); font-size:13px; margin:18px 0 0;">
+                New to OrderCraft? <a href="/register/" style="color:var(--brand-primary); font-weight:600; text-decoration:none;">Create an account</a>
+            </p>
+
+            <!-- Quick Demo Credential Autofill (Ideal for College Evaluation & Testing) -->
+            <div class="demo-accounts-section">
+                <div class="demo-title">
+                    <i class="fas fa-key"></i>
+                    <span>Quick-Fill Demo Roles (1-Click Fill):</span>
+                </div>
+                <div class="demo-pills">
+                    <button type="button" class="demo-pill" onclick="quickFillRole('admin', 'ordercraft123')">
+                        👑 Admin
+                    </button>
+                    <button type="button" class="demo-pill" onclick="quickFillRole('sales_officer', 'ordercraft123')">
+                        📝 Sales Officer
+                    </button>
+                    <button type="button" class="demo-pill" onclick="quickFillRole('prod_manager', 'ordercraft123')">
+                        ⚙️ Production Mgr
+                    </button>
+                    <button type="button" class="demo-pill" onclick="quickFillRole('proc_officer', 'ordercraft123')">
+                        📦 Procurement
+                    </button>
+                    <button type="button" class="demo-pill" onclick="quickFillRole('accountant', 'ordercraft123')">
+                        💳 Accountant
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/api.js' %}?v=20261121-2"></script>
+    <script>
+        // Password Visibility Toggle Functionality
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('login-password');
+            const eyeIcon = document.getElementById('password-eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Quick-Fill Demo Roles for Testing
+        function quickFillRole(username, password) {
+            document.getElementById('login-username').value = username;
+            document.getElementById('login-password').value = password;
+            hideMessages();
+            showToast(`Filled credentials for ${username}`, 'info');
+        }
+
+        function hideMessages() {
+            const errBox = document.getElementById('login-error-box');
+            const succBox = document.getElementById('login-success-box');
+            if (errBox) errBox.classList.remove('show');
+            if (succBox) succBox.classList.remove('show');
+        }
+
+        // Handle Login Submission via existing Backend API
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const submitBtn = document.getElementById('btn-login-submit');
+            const submitText = document.getElementById('btn-submit-text');
+            const submitIcon = document.getElementById('btn-submit-icon');
+            const errorBox = document.getElementById('login-error-box');
+            const errorText = document.getElementById('login-error-text');
+            const successBox = document.getElementById('login-success-box');
+
+            if (!username || !password) {
+                errorText.textContent = 'Please enter both username/email and password.';
+                errorBox.classList.add('show');
+                return;
+            }
+
+            // Set loading state
+            submitBtn.disabled = true;
+            submitText.textContent = 'Authenticating...';
+            submitIcon.className = 'fas fa-spinner fa-spin';
+
+            try {
+                const rememberMe = document.getElementById('remember-me').checked;
+                const response = await API.login(username, password, rememberMe);
+                
+                // Success state
+                successBox.classList.add('show');
+                submitText.textContent = 'Redirecting...';
+                submitIcon.className = 'fas fa-check';
+
+                if (response.user) {
+                    localStorage.setItem('ordercraft_user', JSON.stringify(response.user));
+                }
+
+                // Redirect to ERP Dashboard
+                setTimeout(() => {
+                    window.location.href = '/app/';
+                }, 600);
+
+            } catch (err) {
+                console.error("Login authentication error:", err);
+                submitBtn.disabled = false;
+                submitText.textContent = 'Sign In to ERP';
+                submitIcon.className = 'fas fa-arrow-right';
+
+                let msg = err.message || 'Invalid username or password. Please verify your credentials.';
+                if (msg.includes('401') || msg.includes('Invalid')) {
+                    msg = 'Invalid username/email or password. Please try again.';
+                }
+                errorText.textContent = msg;
+                errorBox.classList.add('show');
+            }
+        }
+    </script>
+</body>
+</html>

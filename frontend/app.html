@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrderCraft: Mastering Manufacturing Management ERP</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Module 6 Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand-section">
+            <div class="brand-icon">
+                <i class="fas fa-industry"></i>
+            </div>
+            <div class="brand-info">
+                <h2>OrderCraft ERP</h2>
+                <span>Manufacturing Suite</span>
+            </div>
+        </div>
+
+        <div class="plant-badge">
+            <div class="pulse"></div>
+            <span>Apex Precision Plant 01</span>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-section-title">Core Operations</div>
+            <button class="nav-item active" data-tab="tab-dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Executive Dashboard</span>
+            </button>
+            <button class="nav-item" data-tab="tab-orders">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Order Booking</span>
+                <span class="nav-badge" id="badge-orders-count">3</span>
+            </button>
+            <button class="nav-item" data-tab="tab-bom">
+                <i class="fas fa-sitemap"></i>
+                <span>Bill of Material (BOM)</span>
+            </button>
+            <button class="nav-item" data-tab="tab-procurement">
+                <i class="fas fa-truck-loading"></i>
+                <span>Purchase Orders</span>
+                <span class="nav-badge" id="badge-po-count">2</span>
+            </button>
+
+            <div class="nav-section-title">Financials & Accounts</div>
+            <button class="nav-item" data-tab="tab-invoices">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Invoices & GST</span>
+            </button>
+            <button class="nav-item" data-tab="tab-payments">
+                <i class="fas fa-receipt"></i>
+                <span>Payments & Receipts</span>
+            </button>
+
+            <div class="nav-section-title">Governance & Insights</div>
+            <button class="nav-item" data-tab="tab-analytics">
+                <i class="fas fa-chart-line"></i>
+                <span>Reporting & Analytics</span>
+            </button>
+            <button class="nav-item" data-tab="tab-users">
+                <i class="fas fa-user-shield"></i>
+                <span>RBAC & Audit Trail</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-mini-profile">
+                <div class="avatar" id="user-avatar">VM</div>
+                <div class="user-details">
+                    <div class="name" id="user-display-name">Vikram Malhotra</div>
+                    <span class="role-badge" id="user-role-badge">Plant Administrator</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <a href="/" class="header-btn" title="Homepage" style="text-decoration:none; width:32px; height:32px; font-size:12px; border-radius:6px; background:rgba(255,255,255,0.08); color:#cbd5e1; border:none;">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button class="header-btn" title="Sign Out" onclick="logoutUser()" style="width:32px; height:32px; font-size:12px; border-radius:6px; background:rgba(239,68,68,0.15); color:#f87171; border:none; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN VIEW WRAPPER -->
+    <div class="main-wrapper">
+        <!-- TOP HEADER -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="page-title-box">
+                    <h1 id="page-title">Executive Manufacturing Dashboard</h1>
+                    <p id="page-subtitle">Real-time oversight of manufacturing pipeline, BOM, purchase orders, and cashflow</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <!-- Role Switcher for College Presentation Viva -->
+                <div class="role-switch-container" title="Switch role to simulate permissions and access controls">
+                    <i class="fas fa-id-badge" style="color: var(--primary);"></i>
+                    <span class="role-switch-label">Simulate Role:</span>
+                    <select class="role-select" id="role-selector" onchange="switchRole(this.value)">
+                        <option value="ADMIN">Admin / Plant Head</option>
+                        <option value="SALES">Sales Officer</option>
+                        <option value="PRODUCTION">Production Manager</option>
+                        <option value="PROCUREMENT">Procurement Officer</option>
+                        <option value="FINANCE">Finance / Accountant</option>
+                    </select>
+                </div>
+
+                <button class="header-btn" title="Refresh Live Data" onclick="refreshCurrentTab()">
+                    <i class="fas fa-sync-alt" id="refresh-icon"></i>
+                </button>
+                <button class="header-btn" title="Quick BOM Explosion Simulator" onclick="openBOMExplosionModal()">
+                    <i class="fas fa-calculator"></i>
+                </button>
+                <a href="/" class="header-btn" title="Back to Homepage" style="text-decoration:none;">
+                    <i class="fas fa-home"></i>
+                </a>
+                <button class="header-btn" title="Sign Out" onclick="logoutUser()" style="color:var(--danger);">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENT BODY -->
+        <main class="content-body">
+            
+            <!-- =================================================================
+                 TAB 1: EXECUTIVE DASHBOARD
+                 ================================================================= -->
+            <section id="tab-dashboard" class="tab-content active">
+                <!-- KPI Grid -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Total Booked Revenue</span>
+                            <h2 id="kpi-total-rev">₹0</h2>
+                            <div class="kpi-subtext"><i class="fas fa-arrow-up" style="color:#10b981;"></i> 3 Active Orders</div>
+                        </div>
+                        <div class="kpi-icon icon-teal"><i class="fas fa-wallet"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Revenue Collected</span>
+                            <h2 id="kpi-rev-collected">₹0</h2>
+                            <div class="kpi-subtext" id="kpi-receivable-sub">Receivables: ₹0</div>
+                        </div>
+                        <div class="kpi-icon icon-emerald"><i class="fas fa-money-check-alt"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Procurement Spend</span>
+                            <h2 id="kpi-procurement-spend">₹0</h2>
+                            <div class="kpi-subtext" id="kpi-payable-sub">Payables: ₹0</div>
+                        </div>
+                        <div class="kpi-icon icon-amber"><i class="fas fa-shopping-cart"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Inventory Valuation</span>
+                            <h2 id="kpi-inventory-val">₹0</h2>
+                            <div class="kpi-subtext" id="kpi-low-stock-sub"><span style="color:#ef4444; font-weight:600;">0 Low Stock</span></div>
+                        </div>
+                        <div class="kpi-icon icon-blue"><i class="fas fa-boxes"></i></div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-chart-area" style="color:var(--primary);"></i> Revenue & Procurement Cashflow Trend</h3>
+                                <p>Monthly manufacturing turnover vs procurement expenditure</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-trend"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-pie-chart" style="color:var(--info);"></i> Order Pipeline Breakdown</h3>
+                                <p>Sales order distribution by status</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-order-status"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock & Active Orders Split -->
+                <div class="charts-grid" style="grid-template-columns: 1fr 1fr;">
+                    <!-- Low Stock Alerts -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> Inventory Shortage & Reorder Alerts</h3>
+                                <p>Raw materials below safety threshold requiring PO issuance</p>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-low-stock-alerts">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Material Name</th>
+                                            <th>Stock</th>
+                                            <th>Threshold</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Orders -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-clock" style="color:var(--primary);"></i> Active Manufacturing Orders</h3>
+                                <p>Latest customer bookings in production or awaiting dispatch</p>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="showTab('tab-orders')">View All</button>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-recent-orders">
+                                    <thead>
+                                        <tr>
+                                            <th>Order #</th>
+                                            <th>Customer</th>
+                                            <th>Status</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 2: MODULE 1 - ORDER BOOKING
+                 ================================================================= -->
+            <section id="tab-orders" class="tab-content">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-orders" placeholder="Search orders by number, customer..." onkeyup="filterOrdersTable()">
+                    </div>
+                    <div class="filter-group">
+                        <select class="select-filter" id="filter-order-status" onchange="filterOrdersTable()">
+                            <option value="">All Statuses</option>
+                            <option value="DRAFT">Draft</option>
+                            <option value="CONFIRMED">Confirmed</option>
+                            <option value="IN_PRODUCTION">In Production</option>
+                            <option value="READY_FOR_DISPATCH">Ready for Dispatch</option>
+                            <option value="DELIVERED">Delivered</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="openNewOrderModal()">
+                            <i class="fas fa-plus"></i> Book New Sales Order
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-file-signature"></i> Sales Orders & Production Pipeline</h3>
+                            <p>Manage customer orders, specifications, delivery commitments, and 1-click invoice creation</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-sales-orders">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Customer</th>
+                                        <th>Order Date</th>
+                                        <th>Delivery Due</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Total (INR)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customers Directory Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-building"></i> Customer Master Directory</h3>
+                            <p>Registered manufacturing client organizations & delivery locations</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="openAddCustomerModal()">
+                            <i class="fas fa-plus"></i> Add Customer
+                        </button>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-customers">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Company Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Email / Phone</th>
+                                        <th>GSTIN</th>
+                                        <th>City / State</th>
+                                        <th>Orders</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 3: MODULE 2 - BILL OF MATERIALS (BOM)
+                 ================================================================= -->
+            <section id="tab-bom" class="tab-content">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-bom" placeholder="Search products, materials..." onkeyup="filterBOMTable()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-outline-primary" onclick="openBOMExplosionModal()">
+                            <i class="fas fa-calculator"></i> Run BOM Explosion Simulator
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddRawMaterialModal()">
+                            <i class="fas fa-plus"></i> Add Raw Material
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Finished Goods & BOM Catalog -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-cogs"></i> Finished Products & BOM Configurations</h3>
+                            <p>Engineered products, standard selling prices, BOM component recipes & manufacturing margins</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-products-bom">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>BOM No. / Version</th>
+                                        <th>Components</th>
+                                        <th>BOM Cost</th>
+                                        <th>Selling Price</th>
+                                        <th>Margin</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Raw Materials Inventory -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-layer-group"></i> Raw Materials & Warehouse Inventory</h3>
+                            <p>Live inventory stocks, unit costs, reorder levels and warehouse locations</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-raw-materials">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Material Name</th>
+                                        <th>Category</th>
+                                        <th>Unit</th>
+                                        <th>Standard Cost</th>
+                                        <th>Current Stock</th>
+                                        <th>Reorder Level</th>
+                                        <th>Status</th>
+                                        <th>Location</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 4: MODULE 3 - PURCHASE ORDERS (PROCUREMENT)
+                 ================================================================= -->
+            <section id="tab-procurement" class="tab-content">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-po" placeholder="Search POs by number, vendor..." onkeyup="filterPOTable()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="openNewPOModal()">
+                            <i class="fas fa-plus"></i> Issue Purchase Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Purchase Orders Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-file-invoice"></i> Vendor Purchase Orders</h3>
+                            <p>Track component purchases, delivery schedules, and Goods Receipt Notes (GRN)</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-purchase-orders">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Vendor</th>
+                                        <th>Order Date</th>
+                                        <th>Expected Date</th>
+                                        <th>Status</th>
+                                        <th>Amount (INR)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vendors Directory -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-handshake"></i> Approved Vendors & Suppliers</h3>
+                            <p>Raw material vendors, quality ratings, and credit terms</p>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="openAddVendorModal()">
+                            <i class="fas fa-plus"></i> Add Vendor
+                        </button>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-vendors">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Vendor Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Email / Phone</th>
+                                        <th>City / State</th>
+                                        <th>Rating</th>
+                                        <th>Payment Terms</th>
+                                        <th>Total POs</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 5: MODULE 4 - INVOICE GENERATION
+                 ================================================================= -->
+            <section id="tab-invoices" class="tab-content">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-invoices" placeholder="Search invoices by invoice number, customer..." onkeyup="filterInvoicesTable()">
+                    </div>
+                    <div class="filter-group">
+                        <select class="select-filter" id="filter-invoice-status" onchange="filterInvoicesTable()">
+                            <option value="">All Statuses</option>
+                            <option value="ISSUED">Issued</option>
+                            <option value="PARTIALLY_PAID">Partially Paid</option>
+                            <option value="PAID">Paid</option>
+                            <option value="OVERDUE">Overdue</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-receipt"></i> Commercial Tax Invoices (GST Compliant)</h3>
+                            <p>Generate, review, and print official tax invoices with CGST/SGST breakdowns and HSN codes</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-invoices">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Customer</th>
+                                        <th>Sales Order</th>
+                                        <th>Invoice Date</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Grand Total</th>
+                                        <th>Paid</th>
+                                        <th>Balance Due</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 6: MODULE 5 - PAYMENTS & RECONCILIATION
+                 ================================================================= -->
+            <section id="tab-payments" class="tab-content">
+                <!-- Cashflow Summary Banner -->
+                <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Total Customer Receipts</span>
+                            <h2 id="pay-total-inflow">₹0</h2>
+                            <div class="kpi-subtext" style="color:var(--success);"><i class="fas fa-arrow-down"></i> Inflow to Bank</div>
+                        </div>
+                        <div class="kpi-icon icon-emerald"><i class="fas fa-hand-holding-usd"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Total Vendor Payments</span>
+                            <h2 id="pay-total-outflow">₹0</h2>
+                            <div class="kpi-subtext" style="color:var(--warning);"><i class="fas fa-arrow-up"></i> Outflow for Materials</div>
+                        </div>
+                        <div class="kpi-icon icon-amber"><i class="fas fa-credit-card"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Accounts Receivable</span>
+                            <h2 id="pay-receivables">₹0</h2>
+                            <div class="kpi-subtext">Pending Customer Dues</div>
+                        </div>
+                        <div class="kpi-icon icon-blue"><i class="fas fa-file-invoice"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <span>Accounts Payable</span>
+                            <h2 id="pay-payables">₹0</h2>
+                            <div class="kpi-subtext">Pending Vendor Dues</div>
+                        </div>
+                        <div class="kpi-icon icon-rose"><i class="fas fa-truck"></i></div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-payments" placeholder="Search payments by number, reference..." onkeyup="filterPaymentsTable()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="openRecordPaymentModal()">
+                            <i class="fas fa-plus"></i> Record Payment / Receipt
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-exchange-alt"></i> Financial Transactions & Reconciliation Ledger</h3>
+                            <p>Real-time settlement logs for customer invoices and supplier purchase orders</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-payments">
+                                <thead>
+                                    <tr>
+                                        <th>Payment #</th>
+                                        <th>Type</th>
+                                        <th>Party Name</th>
+                                        <th>Ref Document</th>
+                                        <th>Date</th>
+                                        <th>Method</th>
+                                        <th>Ref / UTR #</th>
+                                        <th>Amount (INR)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loaded dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 7: MODULE 6 - REPORTING & ANALYTICS
+                 ================================================================= -->
+            <section id="tab-analytics" class="tab-content">
+                <div class="toolbar">
+                    <div>
+                        <h3 style="font-size:16px; font-weight:700;">Executive Manufacturing Intelligence</h3>
+                        <p style="font-size:12.5px; color:var(--gray-500);">Deep-dive analytical models and compliance export suite</p>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-secondary" onclick="exportData('orders')">
+                            <i class="fas fa-download"></i> Export Orders CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData('materials')">
+                            <i class="fas fa-download"></i> Export Inventory CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData('invoices')">
+                            <i class="fas fa-download"></i> Export Invoices CSV
+                        </button>
+                        <button class="btn btn-primary" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Executive Report
+                        </button>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-chart-pie"></i> Inventory Valuation by Material Category</h3>
+                                <p>Capital allocation across raw metals, electronics, and hardware</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="chart-inventory-categories"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-trophy"></i> Top Manufactured Products</h3>
+                                <p>Leading finished products by sales revenue</p>
+                            </div>
+                        </div>
+                        <div class="card-body" id="top-products-container">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 TAB 8: MODULE 7 - USER MANAGEMENT & RBAC
+                 ================================================================= -->
+            <section id="tab-users" class="tab-content">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-users" placeholder="Search users by name, role, department..." onkeyup="filterUsersTable()">
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-primary" onclick="openAddUserModal()">
+                            <i class="fas fa-user-plus"></i> Add User Account
+                        </button>
+                    </div>
+                </div>
+
+                <div class="charts-grid" style="grid-template-columns: 1.4fr 1fr;">
+                    <!-- Users Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-users-cog"></i> User Accounts & Role-Based Access</h3>
+                                <p>System operators, departmental designations, and security roles</p>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-users">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Full Name</th>
+                                            <th>Role</th>
+                                            <th>Department</th>
+                                            <th>Designation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Role Matrix Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h3><i class="fas fa-shield-alt"></i> RBAC Permission Matrix</h3>
+                                <p>Enforced functional boundaries across modules</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <table class="data-table" style="font-size:12px;">
+                                <thead>
+                                    <tr>
+                                        <th>Role</th>
+                                        <th>Permissions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Admin</strong></td>
+                                        <td>Full system access, user config, approval override, audit review</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sales</strong></td>
+                                        <td>Order booking, customer management, view product prices</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Production</strong></td>
+                                        <td>BOM configuration, stock monitoring, production workflow</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Procurement</strong></td>
+                                        <td>Vendor management, PO issuance, Goods Receipt (GRN)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Finance</strong></td>
+                                        <td>Invoice generation, payment receipts, bank reconciliation</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Log Stream -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3><i class="fas fa-history"></i> System Activity Audit Trail</h3>
+                            <p>Immutable record of critical operational actions, timestamps, and actors</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <ul class="audit-timeline" id="audit-log-list">
+                            <!-- Loaded dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<!-- =============================================================================
+     MODAL DIALOGS
+     ============================================================================= -->
+
+<!-- 1. Modal: Book New Sales Order -->
+<div class="modal-overlay" id="modal-new-order">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-cart-plus" style="color:var(--primary);"></i> Book New Sales Order</h3>
+            <button class="modal-close" onclick="closeModal('modal-new-order')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-new-order" onsubmit="submitNewOrder(event)">
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Customer Organization *</label>
+                        <select class="form-control" id="order-customer-select" required>
+                            <!-- Loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Date *</label>
+                        <input type="date" class="form-control" id="order-date-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Delivery Due Date *</label>
+                        <input type="date" class="form-control" id="order-due-date-input" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Order Priority *</label>
+                        <select class="form-control" id="order-priority-select">
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM" selected>Medium</option>
+                            <option value="HIGH">High</option>
+                            <option value="URGENT">Urgent / Critical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Terms</label>
+                        <input type="text" class="form-control" id="order-payment-terms" value="Net 30 Days">
+                    </div>
+                </div>
+
+                <!-- Line Items Section -->
+                <div style="margin: 16px 0 8px; border-top: 1px solid var(--gray-200); padding-top: 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="font-size:14px; font-weight:700;">Manufactured Products / Order Items</h4>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="addOrderItemRow()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <table class="data-table" id="table-new-order-items">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th style="width: 100px;">Qty</th>
+                                <th style="width: 140px;">Unit Price (₹)</th>
+                                <th style="width: 90px;">Disc %</th>
+                                <th style="width: 120px;">Total (₹)</th>
+                                <th style="width: 40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="new-order-items-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="form-label">Technical Specifications & Custom Manufacturing Requirements</label>
+                    <textarea class="form-control" id="order-special-instructions" rows="2" placeholder="E.g. IP rating, high temperature varnish, third-party inspection..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-new-order')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Book Sales Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 2. Modal: BOM Explosion Simulator -->
+<div class="modal-overlay" id="modal-bom-explosion">
+    <div class="modal-content" style="max-width: 850px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-microchip" style="color:var(--primary);"></i> BOM Explosion & Material Shortage Simulator</h3>
+            <button class="modal-close" onclick="closeModal('modal-bom-explosion')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="display:flex; gap:16px; align-items:flex-end; margin-bottom: 20px; background:var(--gray-50); padding:16px; border-radius:var(--radius-sm);">
+                <div style="flex:2;">
+                    <label class="form-label">Select Finished Product to Explode</label>
+                    <select class="form-control" id="explosion-product-select">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label class="form-label">Batch Production Quantity</label>
+                    <input type="number" class="form-control" id="explosion-qty-input" value="10" min="1">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="runBOMExplosion()">
+                        <i class="fas fa-cogs"></i> Simulate Explosion
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="explosion-results-box" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h4 id="explosion-summary-title" style="font-size:14px; font-weight:700;">Material Requirements Breakdown</h4>
+                    <span id="explosion-shortage-badge" class="badge"></span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table" id="table-explosion-details">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Raw Material</th>
+                                <th>Per Unit</th>
+                                <th>Total Required</th>
+                                <th>Current Stock</th>
+                                <th>Shortage</th>
+                                <th>Est. Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding:12px 16px; background:var(--gray-50); border-radius:var(--radius-sm);">
+                    <div>
+                        <span style="font-size:12px; color:var(--gray-500);">Total Estimated Material Cost:</span>
+                        <h3 id="explosion-total-cost" style="font-size:18px; color:var(--navy-900);">₹0</h3>
+                    </div>
+                    <button class="btn btn-sm btn-primary" id="btn-quick-po" onclick="quickCreatePOFromShortage()">
+                        <i class="fas fa-cart-plus"></i> Generate PO for Shortages
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('modal-bom-explosion')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Modal: Issue New Purchase Order -->
+<div class="modal-overlay" id="modal-new-po">
+    <div class="modal-content" style="max-width: 750px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-truck-loading" style="color:var(--primary);"></i> Issue Purchase Order (PO)</h3>
+            <button class="modal-close" onclick="closeModal('modal-new-po')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-new-po" onsubmit="submitNewPO(event)">
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Approved Vendor *</label>
+                        <select class="form-control" id="po-vendor-select" required>
+                            <!-- Loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Date *</label>
+                        <input type="date" class="form-control" id="po-date-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected Delivery Date *</label>
+                        <input type="date" class="form-control" id="po-due-date-input" required>
+                    </div>
+                </div>
+
+                <!-- PO Line Items -->
+                <div style="margin: 16px 0 8px; border-top: 1px solid var(--gray-200); padding-top: 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="font-size:14px; font-weight:700;">Raw Materials to Procure</h4>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="addPOItemRow()">
+                            <i class="fas fa-plus"></i> Add Material Line
+                        </button>
+                    </div>
+
+                    <table class="data-table" id="table-new-po-items">
+                        <thead>
+                            <tr>
+                                <th>Raw Material</th>
+                                <th style="width: 120px;">Quantity</th>
+                                <th style="width: 140px;">Unit Price (₹)</th>
+                                <th style="width: 40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="new-po-items-tbody">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group" style="margin-top:16px;">
+                    <label class="form-label">Procurement Terms & Notes</label>
+                    <textarea class="form-control" id="po-notes" rows="2" placeholder="Quality inspection notes, logistics instructions..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-new-po')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Issue Purchase Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Modal: Receive Goods (GRN) -->
+<div class="modal-overlay" id="modal-receive-grn">
+    <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-boxes" style="color:var(--primary);"></i> Goods Receipt Note (GRN)</h3>
+            <button class="modal-close" onclick="closeModal('modal-receive-grn')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-receive-grn" onsubmit="submitGRN(event)">
+                <input type="hidden" id="grn-po-id">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">PO Number</label>
+                        <input type="text" class="form-control" id="grn-po-number" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vendor Delivery Challan #</label>
+                        <input type="text" class="form-control" id="grn-challan" placeholder="E.g. CH-99214" required>
+                    </div>
+                </div>
+
+                <div style="margin: 16px 0;">
+                    <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Received Quantities for Stock Update</h4>
+                    <table class="data-table" id="table-grn-items">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Ordered</th>
+                                <th>Already Recv</th>
+                                <th style="width: 140px;">Receiving Now</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grn-items-tbody">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Inspection & QC Remarks</label>
+                    <textarea class="form-control" id="grn-remarks" rows="2" placeholder="Inspection passed, stored in Bay A..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-receive-grn')">Cancel</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i> Confirm Receipt & Restock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Modal: Printable Tax Invoice Viewer -->
+<div class="modal-overlay" id="modal-invoice-viewer">
+    <div class="modal-content" style="max-width: 850px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-file-invoice" style="color:var(--primary);"></i> Commercial Tax Invoice</h3>
+            <div>
+                <button class="btn btn-sm btn-primary" onclick="printInvoice()"><i class="fas fa-print"></i> Print Invoice</button>
+                <button class="modal-close" onclick="closeModal('modal-invoice-viewer')">&times;</button>
+            </div>
+        </div>
+        <div class="modal-body" id="invoice-printable-content">
+            <!-- Dynamic Invoice Template Loaded via JS -->
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('modal-invoice-viewer')">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Modal: Record Payment -->
+<div class="modal-overlay" id="modal-record-payment">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-receipt" style="color:var(--primary);"></i> Record Payment / Receipt</h3>
+            <button class="modal-close" onclick="closeModal('modal-record-payment')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-record-payment" onsubmit="submitPayment(event)">
+                <div class="form-group">
+                    <label class="form-label">Transaction Type *</label>
+                    <select class="form-control" id="payment-type-select" onchange="togglePaymentType(this.value)">
+                        <option value="CUSTOMER_RECEIPT">Customer Receipt (Inflow against Invoice)</option>
+                        <option value="VENDOR_PAYMENT">Vendor Payment (Outflow against PO)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="group-payment-invoice">
+                    <label class="form-label">Select Customer Invoice</label>
+                    <select class="form-control" id="payment-invoice-select" onchange="onPaymentInvoiceSelect(this.value)">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group" id="group-payment-po" style="display:none;">
+                    <label class="form-label">Select Vendor Purchase Order</label>
+                    <select class="form-control" id="payment-po-select">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Payment Amount (₹) *</label>
+                        <input type="number" step="0.01" class="form-control" id="payment-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Date *</label>
+                        <input type="date" class="form-control" id="payment-date" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Payment Method *</label>
+                        <select class="form-control" id="payment-method-select">
+                            <option value="BANK_TRANSFER">Bank Transfer (NEFT / RTGS / IMPS)</option>
+                            <option value="UPI">UPI</option>
+                            <option value="CHEQUE">Cheque</option>
+                            <option value="CREDIT_CARD">Credit Card</option>
+                            <option value="CASH">Cash</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">UTR / Reference / Cheque #</label>
+                        <input type="text" class="form-control" id="payment-ref" placeholder="E.g. UTR-HDFC-99128">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Reconciliation Notes</label>
+                    <input type="text" class="form-control" id="payment-notes" placeholder="Settlement against delivery...">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-record-payment')">Cancel</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Record & Reconcile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Modal: Add Raw Material -->
+<div class="modal-overlay" id="modal-add-material">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-layer-group" style="color:var(--primary);"></i> Add Raw Material Item</h3>
+            <button class="modal-close" onclick="closeModal('modal-add-material')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-material" onsubmit="submitAddMaterial(event)">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Material Code *</label>
+                        <input type="text" class="form-control" id="mat-code" placeholder="E.g. RM-ALU-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select class="form-control" id="mat-category">
+                            <option value="METALS">Raw Metals & Alloys</option>
+                            <option value="ELECTRICAL">Electrical & Winding</option>
+                            <option value="FASTENERS">Fasteners & Hardware</option>
+                            <option value="POLYMERS">Polymers & Seals</option>
+                            <option value="CHEMICALS">Chemicals & Paints</option>
+                            <option value="PACKAGING">Packaging</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Material Name *</label>
+                    <input type="text" class="form-control" id="mat-name" placeholder="E.g. Aluminum Ingot Grade A" required>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Unit *</label>
+                        <select class="form-control" id="mat-unit">
+                            <option value="KG">Kilograms (kg)</option>
+                            <option value="MTR">Meters (m)</option>
+                            <option value="PCS">Pieces (pcs)</option>
+                            <option value="LTR">Liters (L)</option>
+                            <option value="SQM">Square Meters (sqm)</option>
+                            <option value="SET">Sets (set)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit Cost (₹) *</label>
+                        <input type="number" step="0.01" class="form-control" id="mat-cost" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Initial Stock</label>
+                        <input type="number" step="0.01" class="form-control" id="mat-stock" value="100">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Reorder Level Alert Threshold</label>
+                        <input type="number" step="0.01" class="form-control" id="mat-reorder" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warehouse Location</label>
+                        <input type="text" class="form-control" id="mat-location" value="Bay A, Rack 05">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-material')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Material</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 8. Modal: Add User (RBAC) -->
+<div class="modal-overlay" id="modal-add-user">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-shield" style="color:var(--primary);"></i> Add User Account (RBAC)</h3>
+            <button class="modal-close" onclick="closeModal('modal-add-user')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-user" onsubmit="submitAddUser(event)">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Username *</label>
+                        <input type="text" class="form-control" id="new-user-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">System Role *</label>
+                        <select class="form-control" id="new-user-role">
+                            <option value="ADMIN">Plant Administrator</option>
+                            <option value="SALES">Sales Officer</option>
+                            <option value="PRODUCTION">Production Manager</option>
+                            <option value="PROCUREMENT">Procurement Officer</option>
+                            <option value="FINANCE">Finance / Accountant</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">First Name *</label>
+                        <input type="text" class="form-control" id="new-user-first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" class="form-control" id="new-user-last-name" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="new-user-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" id="new-user-department" value="Manufacturing Operations">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-user')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 9. Modal: Add Customer -->
+<div class="modal-overlay" id="modal-add-customer">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-building" style="color:var(--primary);"></i> Register New Client Organization</h3>
+            <button class="modal-close" onclick="closeModal('modal-add-customer')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-customer" onsubmit="submitAddCustomer(event)">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Client Code *</label>
+                        <input type="text" class="form-control" id="cust-code" placeholder="CUST-2026-005" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company Name *</label>
+                        <input type="text" class="form-control" id="cust-company" placeholder="Bharat Dynamics Ltd" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Contact Person *</label>
+                        <input type="text" class="form-control" id="cust-contact" placeholder="Ramesh Kulkarni" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">GSTIN / Tax ID</label>
+                        <input type="text" class="form-control" id="cust-gst" placeholder="27AABCU9918P1ZZ">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="cust-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number *</label>
+                        <input type="text" class="form-control" id="cust-phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Factory / Delivery Address *</label>
+                    <textarea class="form-control" id="cust-address" rows="2" required></textarea>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-control" id="cust-city" value="Pune">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <input type="text" class="form-control" id="cust-state" value="Maharashtra">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pincode</label>
+                        <input type="text" class="form-control" id="cust-pincode" value="411001">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-customer')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Register Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 10. Modal: Add Vendor -->
+<div class="modal-overlay" id="modal-add-vendor">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h3><i class="fas fa-handshake" style="color:var(--primary);"></i> Onboard Approved Vendor</h3>
+            <button class="modal-close" onclick="closeModal('modal-add-vendor')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="form-add-vendor" onsubmit="submitAddVendor(event)">
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Vendor Code *</label>
+                        <input type="text" class="form-control" id="vend-code" placeholder="VND-2026-004" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vendor Business Name *</label>
+                        <input type="text" class="form-control" id="vend-company" placeholder="Precision Fasteners Corp" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Contact Person *</label>
+                        <input type="text" class="form-control" id="vend-contact" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Payment Terms</label>
+                        <input type="text" class="form-control" id="vend-terms" value="Net 30 Days">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" class="form-control" id="vend-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number *</label>
+                        <input type="text" class="form-control" id="vend-phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Vendor Supply Address *</label>
+                    <textarea class="form-control" id="vend-address" rows="2" required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-vendor')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Onboard Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="{% static 'js/api.js' %}?v=20261121-2"></script>
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

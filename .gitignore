@@ -1,0 +1,19 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Python environments and generated files
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local databases and runtime logs
+backend/db.sqlite3
+backend/out.txt
+backend/err.txt
+
+# Django generated assets
+backend/staticfiles/
+backend/media/

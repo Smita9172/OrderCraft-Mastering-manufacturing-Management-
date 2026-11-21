@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrderCraft – Manufacturing ERP Management System</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body class="landing-page">
+
+    <!-- NAVIGATION HEADER -->
+    <header class="landing-nav">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="/" class="nav-brand">
+                    <div class="brand-symbol">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h3>OrderCraft</h3>
+                        <span>Manufacturing ERP</span>
+                    </div>
+                </a>
+
+                <ul class="nav-links">
+                    <li><a href="#features" class="nav-link">Features</a></li>
+                    <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                    <li><a href="#advantages" class="nav-link">Advantages</a></li>
+                    <li><a href="/app/" class="nav-link">Live Portal</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="/login/" class="btn-nav-login">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="/app/" class="btn-nav-portal">
+                        <span>Open ERP</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. HERO SECTION -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="dot"></span>
+                        <span>Enterprise Manufacturing ERP Suite</span>
+                    </div>
+
+                    <h1 class="hero-title">
+                        Manage Your Manufacturing Business <span class="highlight">Smarter.</span>
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        A complete manufacturing ERP solution to manage orders, inventory, production, procurement, invoices and payments from one place.
+                    </p>
+
+                    <div class="hero-btn-group">
+                        <a href="/login/" class="btn-hero-primary">
+                            <span>Get Started / Login</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#features" class="btn-hero-secondary">
+                            <i class="fas fa-th-large"></i>
+                            <span>Explore Features</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-trust-list">
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Real-Time Production Tracking</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Multi-Level BOM Engine</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>GST & Tax Compliant</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clean SaaS Visual Graphic Mockup (No Cheesy Stock Vectors) -->
+                <div class="hero-visual">
+                    <div class="hero-visual-card">
+                        <div class="preview-header">
+                            <div class="preview-dots">
+                                <span class="preview-dot dot-red"></span>
+                                <span class="preview-dot dot-yellow"></span>
+                                <span class="preview-dot dot-green"></span>
+                            </div>
+                            <div class="preview-title">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>OrderCraft Operations Console</span>
+                            </div>
+                            <div style="font-size:11px; color:#10b981; font-weight:600;">Live Feed</div>
+                        </div>
+
+                        <div class="preview-body">
+                            <!-- Mini Metrics -->
+                            <div class="preview-kpi-row">
+                                <div class="mini-kpi">
+                                    <span>Active Work Orders</span>
+                                    <h4>3 Orders Active</h4>
+                                </div>
+                                <div class="mini-kpi">
+                                    <span>Revenue Invoiced</span>
+                                    <h4>₹5,74,188</h4>
+                                </div>
+                            </div>
+
+                            <!-- Active Order Status Tracker -->
+                            <div class="preview-table-box">
+                                <div class="preview-table-header">
+                                    <span>Order Ref / Client</span>
+                                    <span>Manufacturing Stage</span>
+                                </div>
+                                <div class="preview-table-row">
+                                    <div>
+                                        <strong>SO-2026-0001</strong>
+                                        <div style="font-size:11px; color:var(--slate-500);">Tata Motors Heavy Plant</div>
+                                    </div>
+                                    <span class="preview-badge-prod">In Production</span>
+                                </div>
+                                <div class="preview-table-row">
+                                    <div>
+                                        <strong>SO-2026-0002</strong>
+                                        <div style="font-size:11px; color:var(--slate-500);">Larsen & Toubro Ltd</div>
+                                    </div>
+                                    <span style="padding:3px 8px; background:#dcfce7; color:#15803d; border-radius:9999px; font-size:11px; font-weight:600;">Delivered</span>
+                                </div>
+                            </div>
+
+                            <!-- Shortage & BOM Alert Pill -->
+                            <div class="preview-alert-strip">
+                                <div>
+                                    <i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>
+                                    <span>BOM Check: 2 items at reorder threshold</span>
+                                </div>
+                                <a href="/app/" style="color:#be123c; font-weight:700; text-decoration:none; font-size:11px;">View POs &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. FEATURES SECTION (All 11 Dedicated Cards) -->
+    <section class="section-padding" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Modular ERP Architecture</span>
+                <h2 class="section-title">Complete Manufacturing Operations Suite</h2>
+                <p class="section-subtitle">
+                    OrderCraft brings every phase of discrete production, inventory control, and financial settlement into unified harmony.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1: Dashboard & Analytics -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-teal">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Dashboard & Analytics</h3>
+                    <p class="feature-desc">
+                        View business performance, sales, orders and important statistics in one place. Understand business progress through charts and reports.
+                    </p>
+                </div>
+
+                <!-- Feature 2: Order Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-blue">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3 class="feature-title">Order Management</h3>
+                    <p class="feature-desc">
+                        Create and manage customer orders. Track order status, priority, technical specifications, and delivery progress from booking to dispatch.
+                    </p>
+                </div>
+
+                <!-- Feature 3: Product Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-indigo">
+                        <i class="fas fa-boxes-stacked"></i>
+                    </div>
+                    <h3 class="feature-title">Product Management</h3>
+                    <p class="feature-desc">
+                        Manage finished products and product information. Keep product details, selling prices, lead times, and manufacturing margins organized.
+                    </p>
+                </div>
+
+                <!-- Feature 4: Bill of Materials (BOM) -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-purple">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    <h3 class="feature-title">Bill of Materials (BOM)</h3>
+                    <p class="feature-desc">
+                        Define raw materials required to manufacture each product. Understand product-wise material requirements with wastage and cost calculation.
+                    </p>
+                </div>
+
+                <!-- Feature 5: Inventory Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-emerald">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3 class="feature-title">Inventory Management</h3>
+                    <p class="feature-desc">
+                        Monitor available raw materials and stock levels. Keep track of inventory, reorder thresholds, and warehouse rack/bay allocations.
+                    </p>
+                </div>
+
+                <!-- Feature 6: Procurement Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-amber">
+                        <i class="fas fa-truck-loading"></i>
+                    </div>
+                    <h3 class="feature-title">Procurement Management</h3>
+                    <p class="feature-desc">
+                        Manage vendors and purchase orders. Track material purchasing activities, delivery schedules, and Goods Receipt Notes (GRN).
+                    </p>
+                </div>
+
+                <!-- Feature 7: Invoice Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-rose">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3 class="feature-title">Invoice Management</h3>
+                    <p class="feature-desc">
+                        Generate and manage customer invoices. Track pending and completed invoices with full CGST/SGST breakdown and print-ready tax sheets.
+                    </p>
+                </div>
+
+                <!-- Feature 8: Payment Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-teal">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h3 class="feature-title">Payment Management</h3>
+                    <p class="feature-desc">
+                        Record customer payments. Monitor paid and pending amounts with automated real-time invoice balance reconciliation.
+                    </p>
+                </div>
+
+                <!-- Feature 9: Customer Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-blue">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3 class="feature-title">Customer Management</h3>
+                    <p class="feature-desc">
+                        Store and manage customer information. Access customer-related order details, billing addresses, GSTIN numbers, and contact history.
+                    </p>
+                </div>
+
+                <!-- Feature 10: Vendor Management -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-cyan">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="feature-title">Vendor Management</h3>
+                    <p class="feature-desc">
+                        Maintain vendor information. Manage supplier relationships, evaluate quality ratings, and monitor agreed credit payment terms.
+                    </p>
+                </div>
+
+                <!-- Feature 11: Reports & Analytics -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper icon-indigo">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <h3 class="feature-title">Reports & Analytics</h3>
+                    <p class="feature-desc">
+                        View useful business insights and performance reports. Support better business decisions with 1-click CSV exports for compliance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. HOW IT WORKS SECTION (7 Steps) -->
+    <section class="section-padding how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Manufacturing Lifecycle</span>
+                <h2 class="section-title">How OrderCraft Works</h2>
+                <p class="section-subtitle">
+                    A streamlined 7-step digital pipeline connecting client requirements to factory floor execution and financial clearance.
+                </p>
+            </div>
+
+            <div class="steps-timeline">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-badge">1</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Add Customers and Vendors</h4>
+                        <p class="step-desc">Register client organizations with shipping details and approved suppliers with credit terms.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-address-book"></i></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-badge">2</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Create Products and Define Their BOM</h4>
+                        <p class="step-desc">Configure finished goods recipes with raw material specifications, scrap ratios, and unit costs.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-cogs"></i></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-badge">3</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Manage Raw Material Inventory</h4>
+                        <p class="step-desc">Track physical stock across warehouse bays with automated alerts for reorder thresholds.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-layer-group"></i></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-badge">4</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Create Customer Orders</h4>
+                        <p class="step-desc">Book sales orders with required delivery deadlines, priority tags, and custom technical requirements.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-file-signature"></i></div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card">
+                    <div class="step-badge">5</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Purchase Required Raw Materials</h4>
+                        <p class="step-desc">Run BOM shortage explosion, issue purchase orders, and receive consignments via GRN into stock.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-cart-arrow-down"></i></div>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="step-card">
+                    <div class="step-badge">6</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Generate Invoices and Record Payments</h4>
+                        <p class="step-desc">Convert dispatched orders into GST tax invoices and reconcile customer settlements in real time.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-money-check-alt"></i></div>
+                </div>
+
+                <!-- Step 7 -->
+                <div class="step-card">
+                    <div class="step-badge">7</div>
+                    <div class="step-content">
+                        <h4 class="step-title">Monitor Everything Through the Dashboard</h4>
+                        <p class="step-desc">Gain total transparency over plant capacity, active order pipeline, cashflow, and audit activity.</p>
+                    </div>
+                    <div class="step-icon-tag"><i class="fas fa-tachometer-alt"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ADVANTAGES SECTION -->
+    <section class="section-padding" id="advantages">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Enterprise Reliability</span>
+                <h2 class="section-title">Built for Modern Discrete Manufacturing</h2>
+                <p class="section-subtitle">
+                    Designed to eliminate factory bottlenecks, reduce inventory carrying costs, and accelerate order dispatch.
+                </p>
+            </div>
+
+            <div class="edge-grid">
+                <div class="edge-box">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Instant BOM Explosion</h4>
+                    <p>Detect material shortages before production starts and convert shortages into POs in one click.</p>
+                </div>
+                <div class="edge-box">
+                    <i class="fas fa-balance-scale"></i>
+                    <h4>Auto-Reconciliation</h4>
+                    <p>Payments recorded against invoices dynamically balance receivables without double-entry errors.</p>
+                </div>
+                <div class="edge-box">
+                    <i class="fas fa-user-shield"></i>
+                    <h4>Role-Based Access (RBAC)</h4>
+                    <p>Strict boundaries separating Sales, Production, Procurement, and Financial controllers.</p>
+                </div>
+                <div class="edge-box">
+                    <i class="fas fa-database"></i>
+                    <h4>Cloud PostgreSQL Backed</h4>
+                    <p>Full relational integrity with Supabase PostgreSQL connection support and zero-config local fallback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. CALL TO ACTION SECTION -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2>Experience OrderCraft in Action</h2>
+                <p>
+                    Log in with pre-seeded demo roles or launch the full manufacturing ERP operations dashboard immediately.
+                </p>
+                <div class="cta-btn-group">
+                    <a href="/login/" class="btn-cta-light">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Go to Login Page</span>
+                    </a>
+                    <a href="/app/" class="btn-cta-teal">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Open Live ERP Dashboard</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="landing-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                        <div class="brand-symbol" style="width:34px; height:34px; font-size:16px;">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3 style="color:#fff; margin:0; font-size:18px;">OrderCraft</h3>
+                    </div>
+                    <p style="font-size:13.5px; line-height:1.6; max-width:320px; color:var(--slate-400);">
+                        Enterprise Manufacturing Resource Planning & Operations Suite. Developed for precision manufacturing plants.
+                    </p>
+                    <div style="margin-top:16px;">
+                        <span class="status-indicator">
+                            <span class="status-dot"></span>
+                            <span>All ERP Services & Database Online</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Operations</h4>
+                    <ul class="footer-links">
+                        <li><a href="/app/">Executive Dashboard</a></li>
+                        <li><a href="/app/">Order Booking</a></li>
+                        <li><a href="/app/">Bill of Materials</a></li>
+                        <li><a href="/app/">Procurement & POs</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Financials</h4>
+                    <ul class="footer-links">
+                        <li><a href="/app/">GST Tax Invoices</a></li>
+                        <li><a href="/app/">Payment Ledger</a></li>
+                        <li><a href="/app/">Reconciliation</a></li>
+                        <li><a href="/app/">Executive Reports</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Access & Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="/login/">System Login</a></li>
+                        <li><a href="/admin/">Django Admin</a></li>
+                        <li><a href="/api/analytics/dashboard/">REST API Health</a></li>
+                        <li><a href="#how-it-works">User Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>&copy; 2026 OrderCraft ERP. All rights reserved. Developed for Academic Major Evaluation.</div>
+                <div>Apex Precision Engineering &bull; Version 2.4 Production</div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

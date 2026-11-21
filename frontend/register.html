@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account – OrderCraft Manufacturing ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body class="auth-page">
+    <div class="auth-wrapper">
+        <div class="auth-banner-side">
+            <div>
+                <div class="auth-banner-brand">
+                    <div class="auth-banner-symbol"><i class="fas fa-industry"></i></div>
+                    <div><h3>OrderCraft</h3><span>Manufacturing ERP</span></div>
+                </div>
+                <div class="auth-banner-middle">
+                    <h2>One secure workspace for plant operations</h2>
+                    <p>Join the OrderCraft portal to manage manufacturing workflows, inventory, procurement, billing, and operational insights.</p>
+                    <ul class="auth-feature-list">
+                        <li><i class="fas fa-check-circle"></i><span>Role-aware manufacturing operations</span></li>
+                        <li><i class="fas fa-check-circle"></i><span>Live inventory and procurement visibility</span></li>
+                        <li><i class="fas fa-check-circle"></i><span>Secure server-side account handling</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="auth-banner-footer">Apex Precision Engineering • Production Facility 01 • System Active</div>
+        </div>
+
+        <div class="auth-form-side">
+            <a href="/" class="back-home-link"><i class="fas fa-arrow-left"></i><span>Back to OrderCraft Homepage</span></a>
+            <div class="auth-header">
+                <h1>Create your OrderCraft account</h1>
+                <p>Use your work email to access the manufacturing operations portal.</p>
+            </div>
+
+            <div class="auth-error-box" id="register-error-box" role="alert">
+                <i class="fas fa-exclamation-circle"></i><span id="register-error-text"></span>
+            </div>
+            <div class="auth-success-box" id="register-success-box" role="status">
+                <i class="fas fa-check-circle"></i><span id="register-success-text"></span>
+            </div>
+
+            <form class="auth-form" id="register-form" onsubmit="handleRegisterSubmit(event)">
+                <div class="auth-field">
+                    <label class="auth-label" for="register-email">Email Address *</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-envelope field-icon"></i>
+                        <input class="auth-input" type="email" id="register-email" name="email" placeholder="you@company.com" required autocomplete="email">
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label" for="register-password">Password *</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-lock field-icon"></i>
+                        <input class="auth-input" type="password" id="register-password" name="password" minlength="8" placeholder="At least 8 characters" required autocomplete="new-password">
+                        <button class="toggle-password-btn" type="button" onclick="togglePassword('register-password', 'register-password-eye')" title="Show/Hide Password"><i class="fas fa-eye" id="register-password-eye"></i></button>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label" for="register-confirm-password">Confirm Password *</label>
+                    <div class="auth-input-wrapper">
+                        <i class="fas fa-shield-alt field-icon"></i>
+                        <input class="auth-input" type="password" id="register-confirm-password" name="confirm_password" minlength="8" placeholder="Re-enter your password" required autocomplete="new-password">
+                        <button class="toggle-password-btn" type="button" onclick="togglePassword('register-confirm-password', 'register-confirm-password-eye')" title="Show/Hide Password"><i class="fas fa-eye" id="register-confirm-password-eye"></i></button>
+                    </div>
+                </div>
+                <button class="btn-auth-submit" type="submit" id="btn-register-submit"><span id="btn-register-text">Register Account</span><i class="fas fa-arrow-right" id="btn-register-icon"></i></button>
+            </form>
+
+            <p style="text-align:center; color:var(--slate-500); font-size:13px; margin:20px 0 0;">
+                Already have an account? <a href="/login/" style="color:var(--brand-primary); font-weight:600; text-decoration:none;">Sign in</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Version query prevents a previously cached API object from hiding new methods. -->
+    <script src="{% static 'js/api.js' %}?v=20261121-2"></script>
+    <script>
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            const visible = input.type === 'password';
+            input.type = visible ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !visible);
+            icon.classList.toggle('fa-eye-slash', visible);
+        }
+
+        function showRegisterError(message) {
+            document.getElementById('register-error-text').textContent = message;
+            document.getElementById('register-error-box').classList.add('show');
+            document.getElementById('register-success-box').classList.remove('show');
+        }
+
+        async function handleRegisterSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            const button = document.getElementById('btn-register-submit');
+            const buttonText = document.getElementById('btn-register-text');
+            const buttonIcon = document.getElementById('btn-register-icon');
+
+            document.getElementById('register-error-box').classList.remove('show');
+            if (!window.API || typeof window.API.register !== 'function') {
+                showRegisterError('Registration service is unavailable. Please refresh the Django registration page and try again.');
+                return;
+            }
+            if (password !== confirmPassword) {
+                showRegisterError('Passwords do not match.');
+                return;
+            }
+            if (password.length < 8) {
+                showRegisterError('Password must be at least 8 characters long.');
+                return;
+            }
+
+            button.disabled = true;
+            buttonText.textContent = 'Creating account...';
+            buttonIcon.className = 'fas fa-spinner fa-spin';
+            try {
+                await API.register(email, password, confirmPassword);
+                document.getElementById('register-success-text').textContent = 'Account created. Redirecting to sign in...';
+                document.getElementById('register-success-box').classList.add('show');
+                setTimeout(() => { window.location.href = '/login/'; }, 900);
+            } catch (err) {
+                showRegisterError(err.message || 'Unable to create your account. Please try again.');
+                button.disabled = false;
+                buttonText.textContent = 'Register Account';
+                buttonIcon.className = 'fas fa-arrow-right';
+            }
+        }
+    </script>
+</body>
+</html>
